@@ -28,11 +28,11 @@ module.exports = env => ({
     publicPath: '',
     historyApiFallback: true,
     compress: true,
-    port: 4040,
+    port: 1911,
     noInfo: true,
     quiet: true,
     clientLogLevel: 'warning',
     stats: 'errors-only',
-    open: true,
+    open: false,
   },
 });
