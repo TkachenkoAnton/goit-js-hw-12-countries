@@ -1,4 +1,6 @@
 import refs from './refs.js';
+import { multipleRender, singleRender, clearUl } from './markup.js';
+
 const _ = require('lodash');
 
 refs.formCountryNameInput.value = '';
@@ -25,43 +27,18 @@ function fetchCountries(searchQuery) {
     )
     .then(countriesArray => {
       if (countriesArray.length > 1 && countriesArray.length <= 10) {
-        countriesArray.map(({ name }) => {
-          multipleRender(name);
+        refs.searchResult.innerHTML = '';
+        countriesArray.map(country => {
+          multipleRender(country);
         });
       } else if (countriesArray.length === 1) {
-        countriesArray.map(({ name, capital, population, languages, flag }) => {
-          singleRender(name, capital, population, languages, flag);
+        refs.searchResult.innerHTML = '';
+        countriesArray.map(country => {
+          singleRender(country);
         });
       }
     });
 }
 
-function multipleRender(name) {
-  refs.searchResult.insertAdjacentHTML('beforeend', `<li>${name}</li>`);
-}
-
-function singleRender(name, capital, population, languages, flag) {
-  refs.searchResult.insertAdjacentHTML(
-    'beforeend',
-    `<li>
-        <ul>
-          <li>${name}</li>
-          <li>${capital}</li>
-          <li>${population}</li>
-          <li>${languages}</li>
-          <li><img src="${flag}" alt="${name}"></li>
-        </ul>
-      </li>`,
-  );
-}
-
-function clearUl() {
-  if (refs.formCountryNameInput.value === '') {
-    refs.searchResult.innerHTML = '';
-  }
-}
-
 refs.formCountryNameInput.addEventListener('input', searchQuery);
 refs.formCountryName.addEventListener('submit', e => e.preventDefault());
-
-export default fetchCountries;
