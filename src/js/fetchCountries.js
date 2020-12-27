@@ -51,7 +51,7 @@ function fetchCountries(searchQuery) {
         });
       }
     })
-    .catch(function () {
+    .catch(() => {
       error({
         title: 'Sorry',
         text: 'Country does not exist!',
