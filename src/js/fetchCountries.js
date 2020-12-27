@@ -1,7 +1,6 @@
 import refs from './refs.js';
 import { multipleRender, singleRender, clearUl } from './markup.js';
-import * as PNotify from '@pnotify/core/dist/PNotify.js';
-// import * as PNotifyMobile from '@pnotify/mobile/dist/PNotifyMobile.js';
+import { error, success, info } from './pnotify';
 
 const _ = require('lodash');
 
@@ -33,7 +32,7 @@ function fetchCountries(searchQuery) {
         countriesArray.map(country => {
           multipleRender(country);
         });
-        PNotify.success({
+        success({
           title: 'Success!',
           text: 'Look at the countries on your request',
         });
@@ -42,19 +41,18 @@ function fetchCountries(searchQuery) {
         countriesArray.map(country => {
           singleRender(country);
         });
-        PNotify.success({
+        success({
           title: 'Success!',
           text: 'Country info loaded',
         });
       } else if (countriesArray.length > 10) {
-        PNotify.info({
+        info({
           text: 'Too many matches found. Please enter a more specific query!',
-          hide: true,
         });
       }
     })
     .catch(function () {
-      PNotify.error({
+      error({
         title: 'Sorry',
         text: 'Country does not exist!',
       });
