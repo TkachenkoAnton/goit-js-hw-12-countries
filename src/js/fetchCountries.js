@@ -1,5 +1,7 @@
 import refs from './refs.js';
 import { multipleRender, singleRender, clearUl } from './markup.js';
+import * as PNotify from '@pnotify/core/dist/PNotify.js';
+// import * as PNotifyMobile from '@pnotify/mobile/dist/PNotifyMobile.js';
 
 const _ = require('lodash');
 
@@ -31,12 +33,31 @@ function fetchCountries(searchQuery) {
         countriesArray.map(country => {
           multipleRender(country);
         });
+        PNotify.success({
+          title: 'Success!',
+          text: 'Look at the countries on your request',
+        });
       } else if (countriesArray.length === 1) {
         refs.searchResult.innerHTML = '';
         countriesArray.map(country => {
           singleRender(country);
         });
+        PNotify.success({
+          title: 'Success!',
+          text: 'Country info loaded',
+        });
+      } else if (countriesArray.length > 10) {
+        PNotify.info({
+          text: 'Too many matches found. Please enter a more specific query!',
+          hide: true,
+        });
       }
+    })
+    .catch(function () {
+      PNotify.error({
+        title: 'Sorry',
+        text: 'Country does not exist!',
+      });
     });
 }
 
