@@ -1,6 +1,6 @@
 import refs from './refs.js';
-import { multipleRender, singleRender, clearUl } from './markup.js';
-import { error, success, info } from './pnotify';
+import { clearUl, fullRender } from './markup.js';
+import { error } from './pnotify.js';
 
 const _ = require('lodash');
 
@@ -26,31 +26,7 @@ function fetchCountries(searchQuery) {
           .includes(refs.formCountryNameInput.value.toLowerCase()),
       ),
     )
-    .then(countriesArray => {
-      if (countriesArray.length > 1 && countriesArray.length <= 10) {
-        refs.searchResult.innerHTML = '';
-        countriesArray.map(country => {
-          multipleRender(country);
-        });
-        success({
-          title: 'Success!',
-          text: 'Look at the countries on your request',
-        });
-      } else if (countriesArray.length === 1) {
-        refs.searchResult.innerHTML = '';
-        countriesArray.map(country => {
-          singleRender(country);
-        });
-        success({
-          title: 'Success!',
-          text: 'Country info loaded',
-        });
-      } else if (countriesArray.length > 10) {
-        info({
-          text: 'Too many matches found. Please enter a more specific query!',
-        });
-      }
-    })
+    .then(countriesArray => fullRender(countriesArray))
     .catch(() => {
       error({
         title: 'Sorry',
