@@ -1,29 +1,42 @@
+import fetchCountries from './fetchCountries';
 import refs from './refs.js';
-import { success, info } from './pnotify.js';
+import { success, info, error } from './pnotify.js';
 import markupSingleRender from '../templates/markupSingleRender.hbs';
 import markupMultipleRender from '../templates/markupMultipleRender.hbs';
 
-function multipleRender(country) {
-  refs.searchResult.insertAdjacentHTML(
-    'beforeend',
-    markupMultipleRender([...country]),
-  );
-}
+const _ = require('lodash');
 
-function singleRender(country) {
-  refs.searchResult.insertAdjacentHTML(
-    'beforeend',
-    markupSingleRender([...country]),
-  );
-}
+refs.formCountryNameInput.value = '';
 
-function clearUl() {
-  if (refs.formCountryNameInput.value === '') {
-    refs.searchResult.innerHTML = '';
+function fullRender(searchQuery) {
+  if (searchQuery === '') {
+    clearUl();
+    return;
   }
+  fetchCountries(searchQuery)
+    .then(data =>
+      data.filter(country =>
+        country.name
+          .toLowerCase()
+          .includes(refs.formCountryNameInput.value.toLowerCase()),
+      ),
+    )
+    .then(countriesArray => markupRender(countriesArray))
+    .catch(() => {
+      refs.formCountryNameInput.value = '';
+      clearUl();
+      error({
+        title: 'Sorry',
+        text: 'Country does not exist!',
+      });
+    });
 }
 
-function fullRender(countriesArray) {
+const debounced = _.debounce(() => {
+  fullRender(refs.formCountryNameInput.value);
+}, 500);
+
+function markupRender(countriesArray) {
   if (countriesArray.length > 1 && countriesArray.length <= 10) {
     refs.searchResult.innerHTML = '';
     countriesArray.map(country => {
@@ -49,4 +62,25 @@ function fullRender(countriesArray) {
   }
 }
 
-export { clearUl, fullRender };
+function multipleRender(country) {
+  refs.searchResult.insertAdjacentHTML(
+    'beforeend',
+    markupMultipleRender([...country]),
+  );
+}
+
+function singleRender(country) {
+  refs.searchResult.insertAdjacentHTML(
+    'beforeend',
+    markupSingleRender([...country]),
+  );
+}
+
+function clearUl() {
+  if (refs.formCountryNameInput.value === '') {
+    refs.searchResult.innerHTML = '';
+  }
+}
+
+refs.formCountryNameInput.addEventListener('input', debounced);
+refs.formCountryName.addEventListener('submit', e => e.preventDefault());
