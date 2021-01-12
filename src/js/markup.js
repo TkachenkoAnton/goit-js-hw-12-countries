@@ -14,16 +14,13 @@ function fullRender(searchQuery) {
     return;
   }
   fetchCountries(searchQuery)
-    .then(data => {
-      if (!data.status) {
-        return data.filter(country =>
-          country.name
-            .toLowerCase()
-            .includes(refs.formCountryNameInput.value.toLowerCase()),
-        );
-      }
-      throw new Error(`${data.status} ${data.message}`);
-    })
+    .then(data =>
+      data.filter(country =>
+        country.name
+          .toLowerCase()
+          .includes(refs.formCountryNameInput.value.toLowerCase()),
+      ),
+    )
     .then(countriesArray => markupRender(countriesArray))
     .catch(e => {
       refs.formCountryNameInput.value = '';
