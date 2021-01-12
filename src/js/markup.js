@@ -14,20 +14,23 @@ function fullRender(searchQuery) {
     return;
   }
   fetchCountries(searchQuery)
-    .then(data =>
-      data.filter(country =>
-        country.name
-          .toLowerCase()
-          .includes(refs.formCountryNameInput.value.toLowerCase()),
-      ),
-    )
+    .then(data => {
+      if (!data.status) {
+        return data.filter(country =>
+          country.name
+            .toLowerCase()
+            .includes(refs.formCountryNameInput.value.toLowerCase()),
+        );
+      }
+      throw new Error(`${data.status} ${data.message}`);
+    })
     .then(countriesArray => markupRender(countriesArray))
-    .catch(() => {
+    .catch(e => {
       refs.formCountryNameInput.value = '';
       clearUl();
       error({
         title: 'Sorry',
-        text: 'Country does not exist!',
+        text: e,
       });
     });
 }
